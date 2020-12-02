@@ -5787,10 +5787,10 @@ C.4.  Client Tracking Prevention
 
    Offering a ticket to a server additionally allows the server to
    correlate different connections.  This is possible independent of
-   session reuse.  Client applications SHOULD NOT resume sessions
-   between connections that are meant to be uncorrelated.  For example,
-   [FETCH] defines network partition keys to separate cache lookups in
-   web browsers.
+   ticket reuse.  Client applications SHOULD NOT resume tickets between
+   connections that are meant to be uncorrelated.  For example, [FETCH]
+   defines network partition keys to separate cache lookups in web
+   browsers.
 
 C.5.  Unauthenticated Operation
 
