@@ -4,10 +4,10 @@
 
 Transport Layer Security                                     E. Rescorla
 Internet-Draft                                   Windy Hill Systems, LLC
-Obsoletes: 8446 (if approved)                              19 March 2024
+Obsoletes: 8446 (if approved)                               12 June 2024
 Updates: 5705, 6066, 7627, 8422 (if approved)                           
 Intended status: Standards Track                                        
-Expires: 20 September 2024
+Expires: 14 December 2024
 
 
         The Transport Layer Security (TLS) Protocol Version 1.3
@@ -39,7 +39,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 September 2024.
+   This Internet-Draft will expire on 14 December 2024.
 
 Copyright Notice
 
@@ -3314,16 +3314,18 @@ Auth | {CertificateVerify*}
    record.  This mechanism allows either side to force an update to the
    entire connection, but causes an implementation which receives
    multiple KeyUpdates while it is silent to respond with a single
-   update.  Until receiving the peer's response, the sender MUST NOT
-   send another KeyUpdate with request_update set to "update_requested".
+   update.  Until receiving a subsequent KeyUpdate from the peer, the
+   sender MUST NOT send another KeyUpdate with request_update set to
+   "update_requested".
 
    Note that implementations may receive an arbitrary number of messages
    between sending a KeyUpdate with request_update set to
-   "update_requested" and receiving the peer's KeyUpdate, because those
-   messages may already be in flight.  However, because send and receive
-   keys are derived from independent traffic secrets, retaining the
-   receive traffic secret does not threaten the forward secrecy of data
-   sent before the sender changed keys.
+   "update_requested" and receiving the peer's KeyUpdate, including
+   unrelated KeyUpdates, because those messages may already be in
+   flight.  However, because send and receive keys are derived from
+   independent traffic secrets, retaining the receive traffic secret
+   does not threaten the forward secrecy of data sent before the sender
+   changed keys.
 
    If implementations independently send their own KeyUpdates with
    request_update set to "update_requested", and they cross in flight,
@@ -4857,9 +4859,7 @@ Auth | {CertificateVerify*}
               Protocols", RFC 8439, DOI 10.17487/RFC8439, June 2018,
               <https://www.rfc-editor.org/rfc/rfc8439>.
 
-   [RFC8996]  Moriarty, K. and S. Farrell, "Deprecating TLS 1.0 and TLS
-              1.1", BCP 195, RFC 8996, DOI 10.17487/RFC8996, March 2021,
-              <https://www.rfc-editor.org/rfc/rfc8996>.
+   [RFC8996]  "*** BROKEN REFERENCE ***".
 
    [SHS]      Dang, Q., "Secure Hash Standard", National Institute of
               Standards and Technology, DOI 10.6028/nist.fips.180-4,
@@ -5001,7 +5001,7 @@ Auth | {CertificateVerify*}
               DOI 10.6028/nist.sp.800-186, February 2023,
               <https://doi.org/10.6028/nist.sp.800-186>.
 
-   [FETCH]    WHATWG, "Fetch Standard", March 2024,
+   [FETCH]    WHATWG, "Fetch Standard", June 2024,
               <https://fetch.spec.whatwg.org/>.
 
    [FG17]     Fischlin, M. and F. Guenther, "Replay Attacks on Zero
