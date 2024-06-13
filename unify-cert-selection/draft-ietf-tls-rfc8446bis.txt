@@ -2911,8 +2911,8 @@ Auth | {CertificateVerify*}
    If the sender has multiple certificates, it chooses one of them based
    on the above-mentioned criteria (in addition to other criteria, such
    as transport-layer endpoint, local configuration, and preferences).
-   Future TLS extensions may extension this criteria to further guide
-   this selection process.
+   Future TLS extensions may extend this criteria to further guide this
+   selection process.
 
 4.4.2.3.  Receiving a Certificate Message
 
@@ -4852,9 +4852,7 @@ Auth | {CertificateVerify*}
               Protocols", RFC 8439, DOI 10.17487/RFC8439, June 2018,
               <https://www.rfc-editor.org/rfc/rfc8439>.
 
-   [RFC8996]  Moriarty, K. and S. Farrell, "Deprecating TLS 1.0 and TLS
-              1.1", BCP 195, RFC 8996, DOI 10.17487/RFC8996, March 2021,
-              <https://www.rfc-editor.org/rfc/rfc8996>.
+   [RFC8996]  "*** BROKEN REFERENCE ***".
 
    [SHS]      Dang, Q., "Secure Hash Standard", National Institute of
               Standards and Technology, DOI 10.6028/nist.fips.180-4,
