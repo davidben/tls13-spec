@@ -2933,17 +2933,7 @@ sent under certain circumstances, as defined below. The Finished
 message is always sent as part of the Authentication Block.
 These messages are encrypted under keys derived from the
 \[sender]_handshake_traffic_secret,
-except for post-handshake authentication.
-
-The computations for the Authentication messages all uniformly
-take the following inputs:
-
-- The certificate and signing key to be used.
-- A Handshake Context consisting of the list of messages to be
-  included in the transcript hash.
-- A Base Key to be used to compute a MAC key.
-
-Based on these inputs, the messages then contain:
+except for post-handshake authentication:
 
 Certificate
 : The certificate to be used for authentication, and any
@@ -2952,23 +2942,11 @@ Certificate
   (including 0-RTT).
 
 CertificateVerify:
-: A signature over the value Transcript-Hash(Handshake Context, Certificate)
+: A signature over the transcript hash up to this point.
 
 Finished:
-: A MAC over the value Transcript-Hash(Handshake Context, Certificate, CertificateVerify)
+: A MAC over the transcript hash up to this point,
   using a MAC key derived from the Base Key.
-{:br}
-
-
-The following table defines the Handshake Context and MAC Base Key
-for each scenario:
-
-| Mode | Handshake Context | Base Key |
-|------|-------------------|----------|
-| Server | ClientHello ... later of EncryptedExtensions/CertificateRequest | server_handshake_traffic_secret |
-| Client | ClientHello ... later of server Finished/EndOfEarlyData | client_handshake_traffic_secret |
-| Post-Handshake | ClientHello ... client Finished + CertificateRequest | [sender]_application_traffic_secret_N |
-{: #hs-ctx-and-keys title="Authentication Inputs"}
 
 ### The Transcript Hash
 
@@ -3010,7 +2988,9 @@ modified sequence.
 In general, implementations can implement the transcript by keeping a
 running transcript hash value based on the negotiated hash. Note,
 however, that subsequent post-handshake authentications do not include
-each other, just the messages through the end of the main handshake.
+each other, just the messages through the end of the main handshake, and the
+messages contained in that particular post-handshake authentication.
+(See {{certificate-verify}} and {{finished}}.)
 
 ###  Certificate
 
@@ -3250,11 +3230,25 @@ Structure of this message:
 
 The algorithm field specifies the signature algorithm used (see
 {{signature-algorithms}} for the definition of this type). The
-signature is a digital signature using that algorithm. The
-content that is covered under the signature is the hash output as described in
-{{the-transcript-hash}}, namely:
+signature is a digital signature using that algorithm.
 
-       Transcript-Hash(Handshake Context, Certificate)
+During the handshake, the content that is covered under the signature is
+the hash output as described in {{the-transcript-hash}}, ending at the
+message immediately preceding CertificateVerify. In this document, the
+preceding message is always a Certificate:
+
+       Transcript-Hash(ClientHello...Certificate)
+
+During post-handshake authentication ({{post-handshake-authentication}}), the
+transcript instead contains only the messages in the main handshake, followed by
+the messages in this particular post-handshake authentication exchange. Other
+post-handshake messages are not included:
+
+       Transcript-Hash(ClientHello...server Finished,
+                       CertificateRequest, Certificate)
+
+If a TLS extension modifies the messages used in post-handshake authentication,
+those modifications are reflected in this transcript hash.
 
 The digital signature is then computed over the concatenation of:
 
@@ -3346,14 +3340,22 @@ receiving the peer's Finished:
    of either the peer's identity or its liveness (i.e.,
    the ClientHello might have been replayed).
 
-The key used to compute the Finished message is computed from the
-Base Key defined in {{authentication-messages}} using HKDF (see
-{{key-schedule}}). Specifically:
+The key used to compute the Finished message is computed from a Base Key
+using HKDF (see {{key-schedule}}) as follows:
 
 ~~~
 finished_key =
     HKDF-Expand-Label(BaseKey, "finished", "", Hash.length)
 ~~~
+
+The following table defines the Base Key for each scenario:
+
+| Mode           | Base Key                              |
+|----------------|---------------------------------------|
+| Server         | server_handshake_traffic_secret       |
+| Client         | client_handshake_traffic_secret       |
+| Post-Handshake | [sender]_application_traffic_secret_N |
+{: #hs-finished-base-keys title="Base Keys for the Finished Message"}
 
 Structure of this message:
 
@@ -3364,18 +3366,41 @@ Structure of this message:
        } Finished;
 
 
-The verify_data value is computed as follows:
+During the handshake, the verify_data value is computed using the
+transcript hash (see {{the-transcript-hash}}), ending at the message
+immediately preceding this Finished message:
+
+       verify_data =
+           HMAC(finished_key, Transcript-Hash(ClientHello...Previous))
+
+In this document, the transcript hash will end at:
+
+* For server Finished, Previous will be EncryptedExtensions, server
+  CertificateRequest, server Certificate, or server CertificateVerify,
+  depending on which is present and comes last.
+
+* For client Finished, Previous will be server Finished, EndofEarlyData,
+  client Certificate, or client CertificateVerify, depending on which is
+  present and comes last.
+
+If the message sequence is modified by a TLS extension, the transcript
+may end at a different message.
+
+During post-handshake authentication ({{post-handshake-authentication}}), the
+transcript instead contains only the messages in the main handshake, followed by
+the messages in this particular post-handshake authentication exchange. Other
+post-handshake messages are not included:
 
        verify_data =
            HMAC(finished_key,
-                Transcript-Hash(Handshake Context,
-                                Certificate*, CertificateVerify*))
+                Transcript-Hash(ClientHello...server Finished,
+                                CertificateRequest, Certificate,
+                                CertificateVerify))
 
-       * Only included if present.
+If a TLS extension modifies the messages used in post-handshake authentication,
+those modifications are reflected in this transcript hash.
 
-HMAC {{RFC2104}} uses the Hash algorithm for the handshake.
-As noted above, the HMAC input can generally be implemented by a running
-hash, i.e., just the handshake hash at this point.
+In both cases, HMAC {{RFC2104}} uses the Hash algorithm for the handshake.
 
 In previous versions of TLS, the verify_data was always 12 octets long. In
 TLS 1.3, it is the size of the HMAC output for the Hash used for the handshake.
