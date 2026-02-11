@@ -2720,14 +2720,14 @@ Auth | {CertificateVerify*}
    in the cookie, rather than requiring it to export the entire
    intermediate hash state (see Section 4.2.2).
 
-   When a range of messages is specified with an ellipsis, the
-   trasncript hash is taken from the sequence of handshake messages that
-   were sent or received during the main handshake, starting at the
-   first ClientHello and ending at the specified message.  In this
-   document, it is taken from the following sequence of handshake
-   messages: ClientHello, HelloRetryRequest, ClientHello, ServerHello,
-   EncryptedExtensions, server CertificateRequest, server Certificate,
-   server CertificateVerify, server Finished, EndOfEarlyData, client
+   When a range of messages is specified with "...", the transcript hash
+   is taken from the sequence of handshake messages that were sent or
+   received during the main handshake, starting at the first ClientHello
+   and ending at the specified message.  In this document, it is taken
+   from the following sequence of handshake messages: ClientHello,
+   HelloRetryRequest, ClientHello, ServerHello, EncryptedExtensions,
+   server CertificateRequest, server Certificate, server
+   CertificateVerify, server Finished, EndOfEarlyData, client
    Certificate, client CertificateVerify, and client Finished.  TLS
    extensions may add or remove messages, in which case the transcript
    hash will reflect the modified sequence.
