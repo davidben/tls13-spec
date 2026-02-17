@@ -3095,8 +3095,8 @@ Auth | {CertificateVerify*}
    transcript hash (see Section 4.4.1), ending at the message
    immediately preceding this Finished message:
 
-      verify_data =
-   HMAC(finished_key, Transcript-Hash(ClientHello...Previous))
+   verify_data =
+       HMAC(finished_key, Transcript-Hash(ClientHello...Previous))
 
    In this document, the transcript hash will end at:
 

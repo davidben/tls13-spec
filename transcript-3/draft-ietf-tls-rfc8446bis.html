@@ -5227,8 +5227,8 @@ transcript hash (see <a href="#the-transcript-hash" class="auto internal xref">S
 immediately preceding this Finished message:<a href="#section-4.4.4-11" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4.4.4-12">
 <pre>
-   verify_data =
-HMAC(finished_key, Transcript-Hash(ClientHello...Previous))
+verify_data =
+    HMAC(finished_key, Transcript-Hash(ClientHello...Previous))
 </pre><a href="#section-4.4.4-12" class="pilcrow">¶</a>
 </div>
 <p id="section-4.4.4-13">In this document, the transcript hash will end at:<a href="#section-4.4.4-13" class="pilcrow">¶</a></p>
